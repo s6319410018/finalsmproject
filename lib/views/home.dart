@@ -399,6 +399,7 @@ class _HOME_UIState extends State<HOME_UI> {
     var digest = md5.convert(bytes);
     return digest.toString();
   }
+///////////////////////////////////////////////
 
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
