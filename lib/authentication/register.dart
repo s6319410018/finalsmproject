@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smartwater/authentication/login.dart';
@@ -523,17 +524,16 @@ class _REGISTER_UIState extends State<REGISTER_UI> {
                         ),
                       ),
                       ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           bool pass = fromKey.currentState!.validate();
                           if (pass) {
                             USER userInput = USER(
-                              userName: input_name.text,
-                              userAddress: input_address.text,
-                              userPhone: input_phone.text,
-                              userPassword: input_password.text,
-                              userProductId: input_key.text,
-                              userEmail: input_email.text,
-                            );
+                                userName: input_name.text,
+                                userAddress: input_address.text,
+                                userPhone: input_phone.text,
+                                userPassword: input_password.text,
+                                userProductId: input_key.text,
+                                userEmail: input_email.text);
                             AUTHENTICATION.callApiRegister(context, userInput);
                           }
                         },

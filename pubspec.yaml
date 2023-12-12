@@ -37,6 +37,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   shared_preferences: ^2.0.17
   http: ^1.1.0
+  firebase_messaging: ^14.7.8
+  firebase_core: ^2.24.2
   google_fonts: ^4.0.0
   get: ^4.6.5
   water_drop_nav_bar: ^2.2.0+5
@@ -51,8 +53,9 @@ dependencies:
   crypto: ^3.0.1
   wave: ^0.2.0
   awesome_notifications: ^0.8.2
-  background_fetch: ^1.2.1
-
+  flutter_background_service: ^5.0.5
+  flutter_local_notifications: ^16.2.0
+  workmanager: ^0.5.2
 
 dev_dependencies:
   flutter_test:

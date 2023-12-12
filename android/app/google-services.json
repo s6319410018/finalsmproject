@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "681466729668",
+    "project_id": "notification-159c0",
+    "storage_bucket": "notification-159c0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:681466729668:android:7e5d6f322f0b7f5fd86591",
+        "android_client_info": {
+          "package_name": "com.example.smartwater"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCFzbNf5VD0LRX-WJkabkSREsGaz6RE7YM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

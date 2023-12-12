@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:crypto/crypto.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -40,6 +41,7 @@ class HOME_UI extends StatefulWidget {
 }
 
 class _HOME_UIState extends State<HOME_UI> {
+  ///////////////////////////////////
   final double _minScale = 0.5;
   final double _maxScale = 2.0;
   double _currentScale = 1.0;

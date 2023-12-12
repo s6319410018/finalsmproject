@@ -6,13 +6,14 @@ class USER {
   String? userProductId;
   String? userEmail;
 
-  USER(
-      {this.userName,
-      this.userAddress,
-      this.userPhone,
-      this.userPassword,
-      this.userProductId,
-      this.userEmail});
+  USER({
+    this.userName,
+    this.userAddress,
+    this.userPhone,
+    this.userPassword,
+    this.userProductId,
+    this.userEmail,
+  });
 
   USER.fromJson(Map<String, dynamic> json) {
     userName = json['userName'];

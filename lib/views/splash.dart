@@ -23,7 +23,8 @@ class _SplashUIState extends State<SplashUI> {
     Future.delayed(
       Duration(seconds: 3),
       () {
-        if (_email.isEmpty || _password.isEmpty) {
+        if ((_email == 'null' && _password == 'null') ||
+            (_email.isEmpty && _password.isEmpty)) {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
