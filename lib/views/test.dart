@@ -1,80 +1,77 @@
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  AwesomeNotifications().initialize(
-      null,
-      [
-        NotificationChannel(
-            channelKey: "channelKey",
-            channelName: "channelName",
-            channelDescription: "channelDescription")
-      ],
-      debug: true);
-
-  runApp(MaterialApp(
-    home: MyWidget(),
-  ));
+  runApp(MyApp());
 }
 
-class MyWidget extends StatefulWidget {
-  const MyWidget({super.key});
-
+class MyApp extends StatelessWidget {
   @override
-  State<MyWidget> createState() => _MyWidgetState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: MyFadeContainer(),
+    );
+  }
 }
 
-class _MyWidgetState extends State<MyWidget> {
+class MyFadeContainer extends StatefulWidget {
+  @override
+  _MyFadeContainerState createState() => _MyFadeContainerState();
+}
+
+class _MyFadeContainerState extends State<MyFadeContainer>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
   @override
   void initState() {
-    AwesomeNotifications().isNotificationAllowed().then(
-      (isAllowed) {
-        if (!isAllowed) {
-          AwesomeNotifications().requestPermissionToSendNotifications();
-        }
-      },
-    );
     super.initState();
-  }
 
-  triggerNotification_On_Ai() {
-    AwesomeNotifications().createNotification(
-        content: NotificationContent(
-      id: 10,
-      channelKey: "channelKey",
-      title: "คำเตือน",
-      body: 'ขณะนี้น้ำถูกเปิดอัตโนมัติ',
-    ));
-  }
+    // Set up the animation controller
+    _controller = AnimationController(
+      duration: Duration(seconds: 2),
+      vsync: this,
+    );
 
-  triggerNotification_Off_Ai() {
-    AwesomeNotifications().createNotification(
-        content: NotificationContent(
-            id: 10,
-            channelKey: "channelKey",
-            title: "คำเตือน",
-            body: 'ขณะนี้น้ำถูกปิดอัตโนมัติ',
-            backgroundColor: Colors.blue.withOpacity(0.3)));
+    // Set up the opacity animation
+    _animation = Tween<double>(begin: 1.0, end: 0.0).animate(_controller);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.amber,
-      body: Column(
-        children: [
-          ElevatedButton(
+      appBar: AppBar(
+        title: Text('Fade Container Animation'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            FadeTransition(
+              opacity: _animation,
+              child: Container(
+                width: 200,
+                height: 200,
+                color: Colors.blue,
+              ),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
               onPressed: () {
-                triggerNotification_On_Ai();
+                // Start the animation when the button is pressed
+                _controller.forward();
               },
-              child: Text("data")),
-          ElevatedButton(
-              onPressed: () {
-                triggerNotification_Off_Ai();
-              },
-              child: Text("data")),
-        ],
+              child: Text('Start Animation'),
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }
