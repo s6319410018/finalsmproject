@@ -72,7 +72,8 @@ class _HOME_UIState extends State<HOME_UI> {
       _datadetailsDataSourcePage2; //ข้อมูลตารางหน้าที่หนึ่ง
   late DatadetailsDataSourcePage3
       _datadetailsDataSourcePage3; //ข้อมูลตารางหน้าที่หนึ่ง
-  ////////////////////////////////////////////////////ส่วนของการตกแต่งคอลัมตารางเก็บข้อมูล
+
+  //ส่วนของการตกแต่งคอลัมตารางเก็บข้อมูล
   List<GridColumn> _columns1 = [
     GridColumn(
       columnName: 'id',
@@ -268,14 +269,13 @@ class _HOME_UIState extends State<HOME_UI> {
                     fontWeight: FontWeight.bold,
                     color: Color.fromARGB(255, 255, 255, 255))))),
   ];
-  /////////////////////////////////////////////////////////////////////
-  ///
-  ///
-
+  //
   @override
   void initState() {
     super.initState();
+    //เรียกใช้งานฟังก์ชั่นสำหรับการเรียกใช้งาน API
     _fetchDataPeriodically();
+    //อนุญาติให้สามารถแสดงการแจ้งเตือน
     AwesomeNotifications().isNotificationAllowed().then(
       (isAllowed) {
         if (!isAllowed) {
@@ -291,9 +291,9 @@ class _HOME_UIState extends State<HOME_UI> {
     _datadetailsDataSourcePage3 = DatadetailsDataSourcePage3([]);
   }
 
-//////////////////////////////////////////////////////////////
+  //ตัวแปรสำหรับเก็บค่าเวลา
   Timer? _fetchDataTimer;
-
+  //ฟังก์ชันสำหรับดึงข้อมูล
   void _fetchDataPeriodically() {
     _fetchDataTimer ??= Timer.periodic(Duration(seconds: 5), (timer) async {
       try {
@@ -314,6 +314,14 @@ class _HOME_UIState extends State<HOME_UI> {
             _datadetailsDataSourcePage2.updateDataGrid(data_update_table);
             _datadetailsDataSourcePage3.updateDataGrid(data_update_table);
             isLoading = false;
+
+            if (_realtimeDataList.isNotEmpty) {
+              for (REALTIME realtimeData in _realtimeDataList) {
+                if (realtimeData.alert == 1) {
+                  triggerNotification_On_Ai();
+                }
+              }
+            }
           });
         }
       } catch (error) {
@@ -323,10 +331,12 @@ class _HOME_UIState extends State<HOME_UI> {
     });
   }
 
+  //ฟังก์ชันสำหรับหยุดทำการดึงข้อมูล
   void _stopFetchingDataPeriodically() {
     _fetchDataTimer?.cancel();
   }
 
+  //ฟังก์ชันแสดงไดอล็อกแจ้งเตือน
   showWarningDialog(BuildContext context, String msg) {
     showDialog(
       context: context,
@@ -390,16 +400,35 @@ class _HOME_UIState extends State<HOME_UI> {
     );
   }
 
-  //////////////////////////////////////////datatestตัวแปรเก็บค่าON-OFF
+  //datatestตัวแปรเก็บค่าON-OFF
   List<DateTime>? dateTimeList;
-  //////////////////
+  //ฟังก์ชันสำหรับเข้ารหัส
   String hash_md5(String input) {
     var bytes = utf8.encode(input);
     var digest = md5.convert(bytes);
     return digest.toString();
   }
-///////////////////////////////////////////////
-//////////////////////////////////////////
+
+  //
+  triggerNotification_On_Ai() {
+    AwesomeNotifications().createNotification(
+        content: NotificationContent(
+      id: 10,
+      channelKey: "channelKey",
+      title: "คำเตือน",
+      body: 'ขณะนี้น้ำถูกเปิดอัตโนมัติ',
+    ));
+  }
+
+  triggerNotification_Off_Ai() {
+    AwesomeNotifications().createNotification(
+        content: NotificationContent(
+            id: 10,
+            channelKey: "channelKey",
+            title: "คำเตือน",
+            body: 'ขณะนี้น้ำถูกปิดอัตโนมัติ',
+            backgroundColor: Colors.blue.withOpacity(0.3)));
+  }
 
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(

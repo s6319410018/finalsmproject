@@ -1,56 +1,80 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(MyApp());
+Future<void> main() async {
+  AwesomeNotifications().initialize(
+      null,
+      [
+        NotificationChannel(
+            channelKey: "channelKey",
+            channelName: "channelName",
+            channelDescription: "channelDescription")
+      ],
+      debug: true);
+
+  runApp(MaterialApp(
+    home: MyWidget(),
+  ));
 }
 
-class MyApp extends StatelessWidget {
+class MyWidget extends StatefulWidget {
+  const MyWidget({super.key});
+
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: MyFadeContainer(),
+  State<MyWidget> createState() => _MyWidgetState();
+}
+
+class _MyWidgetState extends State<MyWidget> {
+  @override
+  void initState() {
+    AwesomeNotifications().isNotificationAllowed().then(
+      (isAllowed) {
+        if (!isAllowed) {
+          AwesomeNotifications().requestPermissionToSendNotifications();
+        }
+      },
     );
+
+    super.initState();
   }
-}
 
-class MyFadeContainer extends StatefulWidget {
-  @override
-  _MyFadeContainerState createState() => _MyFadeContainerState();
-}
+  triggerNotification_On_Ai() {
+    AwesomeNotifications().createNotification(
+        content: NotificationContent(
+      id: 10,
+      channelKey: "channelKey",
+      title: "คำเตือน",
+      body: 'ขณะนี้น้ำถูกเปิดอัตโนมัติ',
+    ));
+  }
 
-class _MyFadeContainerState extends State<MyFadeContainer> {
-  double opacityLevel = 1.0;
+  triggerNotification_Off_Ai() {
+    AwesomeNotifications().createNotification(
+        content: NotificationContent(
+            id: 10,
+            channelKey: "channelKey",
+            title: "คำเตือน",
+            body: 'ขณะนี้น้ำถูกปิดอัตโนมัติ',
+            backgroundColor: Colors.blue.withOpacity(0.3)));
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Fade Animation'),
-      ),
-      body: Center(
-        child: AnimatedOpacity(
-          opacity: opacityLevel,
-          duration: Duration(seconds: 1),
-          child: Container(
-            width: 200.0,
-            height: 200.0,
-            color: Colors.blue,
-            child: Center(
-              child: Text(
-                'Fade me!',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            opacityLevel = opacityLevel == 1.0 ? 0.0 : 1.0;
-          });
-        },
-        child: Icon(Icons.play_arrow),
+      backgroundColor: Colors.amber,
+      body: Column(
+        children: [
+          ElevatedButton(
+              onPressed: () {
+                triggerNotification_On_Ai();
+              },
+              child: Text("data")),
+          ElevatedButton(
+              onPressed: () {
+                triggerNotification_Off_Ai();
+              },
+              child: Text("data")),
+        ],
       ),
     );
   }

@@ -40,22 +40,19 @@ class DatadetailsDataSourcePage1 extends DataGridSource {
     return DataGridRowAdapter(
         color: Color.fromARGB(255, 255, 255, 255), //พื้นหลัง
         cells: row.getCells().map<Widget>((e) {
-          return Padding(
-            padding: const EdgeInsets.all(2.0),
-            child: Card(
-                shape: RoundedRectangleBorder(
-                    side: BorderSide(color: Color(0x53FFFFFF)),
-                    borderRadius: BorderRadius.all(Radius.circular(20))),
-                color: Color.fromARGB(255, 225, 229, 123),
-                child: Center(
-                    child: Padding(
-                        padding: const EdgeInsets.all(2),
-                        child: Text(
-                          e.value.toString(),
-                          style: GoogleFonts.kanit(
-                              fontSize: 13, fontWeight: FontWeight.bold),
-                        )))),
-          );
+          return Card(
+              shape: RoundedRectangleBorder(
+                  side: BorderSide(color: Color(0x53FFFFFF)),
+                  borderRadius: BorderRadius.all(Radius.circular(20))),
+              color: Color.fromARGB(255, 225, 229, 123),
+              child: Center(
+                  child: Padding(
+                      padding: const EdgeInsets.all(2),
+                      child: Text(
+                        e.value.toString(),
+                        style: GoogleFonts.kanit(
+                            fontSize: 13, fontWeight: FontWeight.bold),
+                      ))));
         }).toList());
   }
 

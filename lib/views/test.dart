@@ -1,77 +1,71 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
+  // Add the Firebase messaging delegate
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
+  String? token = await FirebaseMessaging.instance.getToken();
+  print(token);
+
   runApp(MyApp());
+}
+
+// Handle background messages by creating a dedicated isolate
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print('Handling a background message: ${message.messageId}');
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: MyFadeContainer(),
+      title: 'FCM Demo',
+      home: MyHomePage(),
     );
   }
 }
 
-class MyFadeContainer extends StatefulWidget {
+class MyHomePage extends StatefulWidget {
   @override
-  _MyFadeContainerState createState() => _MyFadeContainerState();
+  _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyFadeContainerState extends State<MyFadeContainer>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
+class _MyHomePageState extends State<MyHomePage> {
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
   @override
   void initState() {
     super.initState();
+    _configureFirebaseMessaging();
+  }
 
-    // Set up the animation controller
-    _controller = AnimationController(
-      duration: Duration(seconds: 2),
-      vsync: this,
-    );
+  void _configureFirebaseMessaging() {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print('Received foreground notification: ${message.notification?.title}');
+      // Implement your custom handling of the notification here
+    });
 
-    // Set up the opacity animation
-    _animation = Tween<double>(begin: 1.0, end: 0.0).animate(_controller);
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('Notification opened from terminated/background state');
+      // Implement your custom handling of the notification here
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Fade Container Animation'),
+        title: Text('FCM Demo'),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            FadeTransition(
-              opacity: _animation,
-              child: Container(
-                width: 200,
-                height: 200,
-                color: Colors.blue,
-              ),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Start the animation when the button is pressed
-                _controller.forward();
-              },
-              child: Text('Start Animation'),
-            ),
-          ],
-        ),
+        child: Text('Send Notification'),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 }
