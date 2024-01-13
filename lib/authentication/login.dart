@@ -320,7 +320,8 @@ class _LOGIN_UIState extends State<LOGIN_UI> {
                                   ),
                                   child: Text('เข้าสู่ระบบ',
                                       style: GoogleFonts.kanit(
-                                          fontWeight: FontWeight.bold)),
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white)),
                                 ),
                               ),
                               SizedBox(

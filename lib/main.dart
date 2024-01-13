@@ -1,21 +1,11 @@
-import 'dart:async';
-import 'dart:io';
-import 'dart:ui';
-
 import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:smartwater/services/call_api_firebase.dart';
 import 'package:smartwater/views/splash.dart';
-
-final FlutterLocalNotificationsPlugin flutterLocaPlugin =
-    FlutterLocalNotificationsPlugin();
 
 void main() async {
   /* WidgetsFlutterBinding.ensureInitialized();
   await initservice();*/
+
   AwesomeNotifications().initialize(
       null,
       [

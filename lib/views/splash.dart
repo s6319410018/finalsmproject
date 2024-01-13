@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartwater/authentication/login.dart';
 import 'package:smartwater/views/home.dart';
@@ -120,10 +121,13 @@ class _SplashUIState extends State<SplashUI> {
                 height: MediaQuery.of(context).size.height * 0.1,
                 width: MediaQuery.of(context).size.width * 0.2,
                 child: CircularProgressIndicator(
-                  semanticsLabel: AutofillHints.addressCity,
-                  backgroundColor: Colors.transparent,
-                  color: Colors.black38,
-                  strokeWidth: MediaQuery.of(context).size.width * 0.02,
+                  color: Color.fromARGB(255, 255, 255, 255),
+                  semanticsLabel: Intl.defaultLocale,
+                  strokeAlign: MediaQuery.of(context).size.height * 0.005,
+                  strokeCap: StrokeCap.round,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                      Color.fromARGB(255, 255, 255, 255)),
+                  strokeWidth: MediaQuery.of(context).size.height * 0.005,
                 ),
               ),
             ),

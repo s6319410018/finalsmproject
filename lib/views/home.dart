@@ -22,6 +22,7 @@ import 'package:smartwater/models/timecontrol_model.dart';
 import 'package:smartwater/models/user_model.dart';
 import 'package:smartwater/services/call_api_home.dart';
 import 'package:smartwater/widget/widgetget_table.dart';
+import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:water_drop_nav_bar/water_drop_nav_bar.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:wave/config.dart';
@@ -55,7 +56,7 @@ class _HOME_UIState extends State<HOME_UI> {
 
   late final double width;
   late final double height;
-  late final int steps;
+
 
   ///////////////////////////////////////////////
   int? ControlAi;
@@ -269,12 +270,14 @@ class _HOME_UIState extends State<HOME_UI> {
                     fontWeight: FontWeight.bold,
                     color: Color.fromARGB(255, 255, 255, 255))))),
   ];
+
   //
   @override
   void initState() {
     super.initState();
     //เรียกใช้งานฟังก์ชั่นสำหรับการเรียกใช้งาน API
     _fetchDataPeriodically();
+    _fetchDataNotification();
     //อนุญาติให้สามารถแสดงการแจ้งเตือน
     AwesomeNotifications().isNotificationAllowed().then(
       (isAllowed) {
@@ -292,10 +295,13 @@ class _HOME_UIState extends State<HOME_UI> {
   }
 
   //ตัวแปรสำหรับเก็บค่าเวลา
-  Timer? _fetchDataTimer;
+  Timer? _fetchData_Realtime_Timer;
+  Timer? _fetchData_Notification_Timer;
   //ฟังก์ชันสำหรับดึงข้อมูล
+  // Define a variable to hold the reference to the notification timer
   void _fetchDataPeriodically() {
-    _fetchDataTimer ??= Timer.periodic(Duration(seconds: 5), (timer) async {
+    _fetchData_Realtime_Timer ??=
+        Timer.periodic(Duration(seconds: 5), (timer) async {
       try {
         USER userInput = USER(
           userEmail: widget.email,
@@ -314,10 +320,31 @@ class _HOME_UIState extends State<HOME_UI> {
             _datadetailsDataSourcePage2.updateDataGrid(data_update_table);
             _datadetailsDataSourcePage3.updateDataGrid(data_update_table);
             isLoading = false;
+          });
+        }
+      } catch (error) {
+        print('Error during data fetching: $error');
+        // Handle the error as needed
+      }
+    });
+  }
 
+  void _fetchDataNotification() {
+    _fetchData_Notification_Timer ??=
+        Timer.periodic(Duration(minutes: 1), (timer) async {
+      try {
+        USER userInput = USER(
+          userEmail: widget.email,
+          userPassword: widget.password,
+        );
+        List<REALTIME> data_update_realtime =
+            await CALLAPIDATAHOME.callApiRealtime(context, userInput);
+        if (mounted) {
+          setState(() {
+            _realtimeDataList = data_update_realtime;
             if (_realtimeDataList.isNotEmpty) {
               for (REALTIME realtimeData in _realtimeDataList) {
-                if (realtimeData.alert == 1) {
+                if (realtimeData.alert == 1 && realtimeData.realtimeAI == 1) {
                   triggerNotification_On_Ai();
                 }
               }
@@ -332,8 +359,11 @@ class _HOME_UIState extends State<HOME_UI> {
   }
 
   //ฟังก์ชันสำหรับหยุดทำการดึงข้อมูล
+  @override
   void _stopFetchingDataPeriodically() {
-    _fetchDataTimer?.cancel();
+    _fetchData_Realtime_Timer?.cancel();
+    _fetchData_Notification_Timer?.cancel();
+    super.dispose();
   }
 
   //ฟังก์ชันแสดงไดอล็อกแจ้งเตือน
@@ -400,7 +430,7 @@ class _HOME_UIState extends State<HOME_UI> {
     );
   }
 
-  //datatestตัวแปรเก็บค่าON-OFF
+  //datatestตัวแปรเก็บค่า ON-OFF
   List<DateTime>? dateTimeList;
   //ฟังก์ชันสำหรับเข้ารหัส
   String hash_md5(String input) {
@@ -409,25 +439,17 @@ class _HOME_UIState extends State<HOME_UI> {
     return digest.toString();
   }
 
-  //
+  //  //ฟังก์ชันสำหรับสร้าง notification
   triggerNotification_On_Ai() {
     AwesomeNotifications().createNotification(
-        content: NotificationContent(
-      id: 10,
-      channelKey: "channelKey",
-      title: "คำเตือน",
-      body: 'ขณะนี้น้ำถูกเปิดอัตโนมัติ',
-    ));
-  }
-
-  triggerNotification_Off_Ai() {
-    AwesomeNotifications().createNotification(
-        content: NotificationContent(
-            id: 10,
-            channelKey: "channelKey",
-            title: "คำเตือน",
-            body: 'ขณะนี้น้ำถูกปิดอัตโนมัติ',
-            backgroundColor: Colors.blue.withOpacity(0.3)));
+      content: NotificationContent(
+        id: 10,
+        channelKey: "channelKey",
+        title: "คำเตือน",
+        body: 'มีความผิดปกติในการใช้น้ำเกิดขึ้น',
+        backgroundColor: const Color.fromARGB(255, 232, 104, 95),
+      ),
+    );
   }
 
   Widget build(BuildContext context) {
@@ -683,7 +705,9 @@ class _HOME_UIState extends State<HOME_UI> {
                                                         },
                                                         icon: Icon(
                                                             FontAwesomeIcons
-                                                                .robot),
+                                                                .robot,
+                                                            color:
+                                                                Colors.white),
                                                         label: Text(
                                                           "\t\t\t\tเปิดโหมด",
                                                           style: GoogleFonts.kanit(
@@ -694,7 +718,9 @@ class _HOME_UIState extends State<HOME_UI> {
                                                                   0.04,
                                                               fontWeight:
                                                                   FontWeight
-                                                                      .bold),
+                                                                      .bold,
+                                                              color:
+                                                                  Colors.white),
                                                         ),
                                                         style: ElevatedButton
                                                             .styleFrom(
@@ -770,7 +796,9 @@ class _HOME_UIState extends State<HOME_UI> {
                                                         },
                                                         icon: Icon(
                                                             FontAwesomeIcons
-                                                                .usersGear),
+                                                                .usersGear,
+                                                            color:
+                                                                Colors.white),
                                                         label: Text(
                                                           "\t\t\t\tปิดโหมด",
                                                           style: GoogleFonts.kanit(
@@ -781,7 +809,9 @@ class _HOME_UIState extends State<HOME_UI> {
                                                                   0.04,
                                                               fontWeight:
                                                                   FontWeight
-                                                                      .bold),
+                                                                      .bold,
+                                                              color:
+                                                                  Colors.white),
                                                         ),
                                                         style: ElevatedButton
                                                             .styleFrom(
@@ -1091,8 +1121,11 @@ class _HOME_UIState extends State<HOME_UI> {
                                                                     solenoidInput);
                                                           }
                                                         },
-                                                        icon: Icon(FontAwesomeIcons
-                                                            .glassWaterDroplet),
+                                                        icon: Icon(
+                                                            FontAwesomeIcons
+                                                                .glassWaterDroplet,
+                                                            color:
+                                                                Colors.white),
                                                         label: Text(
                                                           "\t\t\t\tเปิดโหมด",
                                                           style: GoogleFonts.kanit(
@@ -1103,7 +1136,9 @@ class _HOME_UIState extends State<HOME_UI> {
                                                                   0.04,
                                                               fontWeight:
                                                                   FontWeight
-                                                                      .bold),
+                                                                      .bold,
+                                                              color:
+                                                                  Colors.white),
                                                         ),
                                                         style: ElevatedButton
                                                             .styleFrom(
@@ -1182,7 +1217,9 @@ class _HOME_UIState extends State<HOME_UI> {
                                                         },
                                                         icon: Icon(
                                                             FontAwesomeIcons
-                                                                .close),
+                                                                .close,
+                                                            color:
+                                                                Colors.white),
                                                         label: Text(
                                                           "\t\t\t\tปิดโหมด",
                                                           style: GoogleFonts.kanit(
@@ -1193,7 +1230,9 @@ class _HOME_UIState extends State<HOME_UI> {
                                                                   0.04,
                                                               fontWeight:
                                                                   FontWeight
-                                                                      .bold),
+                                                                      .bold,
+                                                              color:
+                                                                  Colors.white),
                                                         ),
                                                         style: ElevatedButton
                                                             .styleFrom(
@@ -2264,10 +2303,10 @@ class _HOME_UIState extends State<HOME_UI> {
                                                                                           }
                                                                                         }
                                                                                       },
-                                                                                      icon: Icon(FontAwesomeIcons.clock),
+                                                                                      icon: Icon(FontAwesomeIcons.clock, color: Colors.white),
                                                                                       label: Text(
                                                                                         "\t\t\t\tเปิดโหมด",
-                                                                                        style: GoogleFonts.kanit(fontSize: MediaQuery.of(context).size.width * 0.04, fontWeight: FontWeight.bold),
+                                                                                        style: GoogleFonts.kanit(fontSize: MediaQuery.of(context).size.width * 0.04, fontWeight: FontWeight.bold, color: Colors.white),
                                                                                       ),
                                                                                       style: ElevatedButton.styleFrom(
                                                                                         side: BorderSide(
@@ -2297,10 +2336,10 @@ class _HOME_UIState extends State<HOME_UI> {
                                                                                           );
                                                                                         }
                                                                                       },
-                                                                                      icon: Icon(FontAwesomeIcons.close),
+                                                                                      icon: Icon(FontAwesomeIcons.close, color: Colors.white),
                                                                                       label: Text(
                                                                                         "\t\t\t\tปิดโหมด",
-                                                                                        style: GoogleFonts.kanit(fontSize: MediaQuery.of(context).size.width * 0.04, fontWeight: FontWeight.bold),
+                                                                                        style: GoogleFonts.kanit(fontSize: MediaQuery.of(context).size.width * 0.04, fontWeight: FontWeight.bold, color: Colors.white),
                                                                                       ),
                                                                                       style: ElevatedButton.styleFrom(
                                                                                         side: BorderSide(
@@ -3929,6 +3968,7 @@ class _HOME_UIState extends State<HOME_UI> {
                                                           ],
                                                         ),
                                                       ),
+                                                     
                                                     ],
                                                   ),
                                                 ),
