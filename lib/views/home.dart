@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:crypto/crypto.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -22,7 +21,6 @@ import 'package:smartwater/models/timecontrol_model.dart';
 import 'package:smartwater/models/user_model.dart';
 import 'package:smartwater/services/call_api_home.dart';
 import 'package:smartwater/widget/widgetget_table.dart';
-import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:water_drop_nav_bar/water_drop_nav_bar.dart';
 import 'package:syncfusion_flutter_datagrid/datagrid.dart';
 import 'package:wave/config.dart';
@@ -57,7 +55,6 @@ class _HOME_UIState extends State<HOME_UI> {
   late final double width;
   late final double height;
 
-
   ///////////////////////////////////////////////
   int? ControlAi;
   int? ControlSolenoid;
@@ -65,6 +62,7 @@ class _HOME_UIState extends State<HOME_UI> {
   bool ai_icon = false;
   bool time_icon = false;
   bool isLoading = true;
+  bool isButtonLocked = true;
   /////////////////////////////////////////////
   late List<REALTIME> _realtimeDataList;
   late DatadetailsDataSourcePage1
@@ -275,9 +273,6 @@ class _HOME_UIState extends State<HOME_UI> {
   @override
   void initState() {
     super.initState();
-    //เรียกใช้งานฟังก์ชั่นสำหรับการเรียกใช้งาน API
-    _fetchDataPeriodically();
-    _fetchDataNotification();
     //อนุญาติให้สามารถแสดงการแจ้งเตือน
     AwesomeNotifications().isNotificationAllowed().then(
       (isAllowed) {
@@ -286,6 +281,10 @@ class _HOME_UIState extends State<HOME_UI> {
         }
       },
     );
+
+    //เรียกใช้งานฟังก์ชั่นสำหรับการเรียกใช้งาน API
+    _fetchDataPeriodically();
+    _fetchDataNotification();
 
     pageController = PageController(initialPage: selectedIndex);
     _realtimeDataList = [];
@@ -331,7 +330,7 @@ class _HOME_UIState extends State<HOME_UI> {
 
   void _fetchDataNotification() {
     _fetchData_Notification_Timer ??=
-        Timer.periodic(Duration(minutes: 1), (timer) async {
+        Timer.periodic(Duration(minutes: 3), (timer) async {
       try {
         USER userInput = USER(
           userEmail: widget.email,
@@ -428,6 +427,31 @@ class _HOME_UIState extends State<HOME_UI> {
         );
       },
     );
+  }
+
+  //ฟังก์ชั่นล็อกปุ่ม
+  Future<void> checkFirstTime() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    bool isFirstTime = prefs.getBool('first_time') ?? true;
+
+    if (isFirstTime) {
+      // ถ้าครั้งแรกระหว่างที่ใช้งาน
+      // บันทึกเวลาปัจจุบัน
+      prefs.setBool('first_time', false);
+      prefs.setInt('start_time', DateTime.now().millisecondsSinceEpoch);
+    } else {
+      // ไม่ใช่ครั้งแรก, ตรวจสอบว่าผ่านไปหนึ่งเดือนหรือไม่
+      int startTime = prefs.getInt('start_time') ?? 0;
+      int currentTime = DateTime.now().millisecondsSinceEpoch;
+
+      if (currentTime - startTime >= 30 * 24 * 60 * 60 * 1000) {
+        // ผ่านไปหนึ่งเดือน
+        setState(() {
+          isButtonLocked = false;
+        });
+      }
+    }
   }
 
   //datatestตัวแปรเก็บค่า ON-OFF
@@ -685,24 +709,23 @@ class _HOME_UIState extends State<HOME_UI> {
                                                             0.001,
                                                       ),
                                                       ElevatedButton.icon(
-                                                        onPressed: () {
-                                                          if (true) {
-                                                            AICONTROL aiInput =
-                                                                AICONTROL(
-                                                                    controlAi:
-                                                                        "1",
-                                                                    userEmail:
-                                                                        widget
-                                                                            .email,
-                                                                    userPassword:
-                                                                        widget
-                                                                            .password);
-                                                            CALLAPIDATAHOME
-                                                                .callApiUpdateAi(
-                                                                    context,
-                                                                    aiInput);
-                                                          }
-                                                        },
+                                                        onPressed:
+                                                            isButtonLocked
+                                                                ? null
+                                                                : () {
+                                                                    if (true) {
+                                                                      AICONTROL aiInput = AICONTROL(
+                                                                          controlAi:
+                                                                              "1",
+                                                                          userEmail: widget
+                                                                              .email,
+                                                                          userPassword:
+                                                                              widget.password);
+                                                                      CALLAPIDATAHOME.callApiUpdateAi(
+                                                                          context,
+                                                                          aiInput);
+                                                                    }
+                                                                  },
                                                         icon: Icon(
                                                             FontAwesomeIcons
                                                                 .robot,
@@ -777,23 +800,24 @@ class _HOME_UIState extends State<HOME_UI> {
                                                             0.002,
                                                       ),
                                                       ElevatedButton.icon(
-                                                        onPressed: () {
-                                                          AICONTROL aiInput =
-                                                              AICONTROL(
-                                                                  userEmail:
-                                                                      widget
-                                                                          .email,
-                                                                  userPassword:
-                                                                      widget
-                                                                          .password,
-                                                                  controlAi:
-                                                                      "0");
+                                                        onPressed:
+                                                            isButtonLocked
+                                                                ? null
+                                                                : () {
+                                                                    AICONTROL aiInput = AICONTROL(
+                                                                        userEmail:
+                                                                            widget
+                                                                                .email,
+                                                                        userPassword:
+                                                                            widget
+                                                                                .password,
+                                                                        controlAi:
+                                                                            "0");
 
-                                                          CALLAPIDATAHOME
-                                                              .callApiUpdateAi(
-                                                                  context,
-                                                                  aiInput);
-                                                        },
+                                                                    CALLAPIDATAHOME.callApiUpdateAi(
+                                                                        context,
+                                                                        aiInput);
+                                                                  },
                                                         icon: Icon(
                                                             FontAwesomeIcons
                                                                 .usersGear,
@@ -3968,7 +3992,6 @@ class _HOME_UIState extends State<HOME_UI> {
                                                           ],
                                                         ),
                                                       ),
-                                                     
                                                     ],
                                                   ),
                                                 ),
