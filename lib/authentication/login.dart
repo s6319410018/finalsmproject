@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smartwater/authentication/register.dart';
 import 'package:smartwater/models/user_model.dart';
 import 'package:smartwater/services/call_api_authentication.dart';
+import 'package:smartwater/utils/env.dart';
+import 'package:http/http.dart' as http;
+import 'package:smartwater/utils/hash.dart';
 
 class LOGIN_UI extends StatefulWidget {
   const LOGIN_UI({super.key});
@@ -19,31 +23,60 @@ class _LOGIN_UIState extends State<LOGIN_UI> {
   bool isShowpassword = false;
   bool _isChecked = false;
 
-  void _handleRemeberme(value) {
-    print("Handle Rember Me");
-    _isChecked = value;
-    SharedPreferences.getInstance().then(
-      (prefs) {
-        prefs.setBool("remember_me", value);
-        prefs.setString('email', input_email.text);
-        prefs.setString('password', hash_md5(input_password.text));
-      },
-    );
-    setState(() {
-      _isChecked = value;
-    });
+  Future<dynamic> _handleRemeberme(value) async {
+    if (input_email.text != '' && input_password.text != '') {
+      USER userInput = USER(
+        userEmail: input_email.text,
+        userPassword: HASH.hash_md5(input_password.text),
+      );
+      try {
+        final response = await http.post(
+          Uri.parse('${ENV.urlApi}login_api.php'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode(userInput.toJson()),
+        );
+
+        if (response.statusCode == 200) {
+          final responseData = jsonDecode(response.body);
+          if (responseData == '1') {
+            setState(() {
+              _isChecked = value;
+              if (_isChecked == false) {
+                print('not remember');
+                SharedPreferences.getInstance().then(
+                  (prefs) {
+                    prefs.setBool("remember_me", false);
+                    prefs.setString('email', 'null');
+                    prefs.setString('password', 'null');
+                  },
+                );
+              } else {
+                print('remember');
+                SharedPreferences.getInstance().then(
+                  (prefs) {
+                    prefs.setBool("remember_me", value);
+                    prefs.setString('email', input_email.text);
+                    prefs.setString(
+                        'password', HASH.hash_md5(input_password.text));
+                  },
+                );
+              }
+            });
+          }
+        } else {
+          AUTHENTICATION.showWarningDialog(context, "ไม่สามารถจดจำข้อมูล");
+        }
+      } catch (e) {
+        return AUTHENTICATION.showWarningDialog(context, 'ลองอีกครั้ง');
+      }
+    } else {
+      AUTHENTICATION.showWarningDialog(context, 'กรุณากรอกข้อมูลให้ครบ');
+    }
   }
 
   final fromKey = GlobalKey<FormState>();
   TextEditingController input_email = TextEditingController();
   TextEditingController input_password = TextEditingController();
-
-  String hash_md5(String input) {
-    var bytes = utf8.encode(input);
-    var digest = md5.convert(bytes);
-    print(digest);
-    return digest.toString();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +97,9 @@ class _LOGIN_UIState extends State<LOGIN_UI> {
             body: SingleChildScrollView(
               child: Column(
                 children: [
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.08,
+                  ),
                   Image.asset('assets/images/icon.png',
                       width: MediaQuery.of(context).size.width * 0.7,
                       color: Color(0xFF7BD5E5)),
@@ -102,8 +138,11 @@ class _LOGIN_UIState extends State<LOGIN_UI> {
                                     decoration: InputDecoration(
                                         hintText:
                                             'กรุณาป้อนอีเมล เช่น 123@gmail.com',
-                                        hintStyle: TextStyle(
-                                          fontWeight: FontWeight.bold,
+                                        hintStyle: GoogleFonts.kanit(
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.03,
                                         ),
                                         enabledBorder: OutlineInputBorder(
                                           borderRadius:
@@ -118,21 +157,24 @@ class _LOGIN_UIState extends State<LOGIN_UI> {
                                         labelStyle: TextStyle(
                                             color: Color.fromARGB(
                                                 255, 220, 220, 220)),
-                                        label: SizedBox(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.39,
-                                          child: Row(
-                                            children: [
-                                              Icon(Icons.email_rounded),
-                                              Text(
-                                                '   กรุณาป้อนอีเมล',
-                                                style: GoogleFonts.kanit(
-                                                    color: Color.fromARGB(
-                                                        255, 0, 0, 0)),
-                                              )
-                                            ],
+                                        label: SingleChildScrollView(
+                                          scrollDirection: Axis.vertical,
+                                          child: SingleChildScrollView(
+                                            scrollDirection: Axis.vertical,
+                                            child: SingleChildScrollView(
+                                              scrollDirection: Axis.vertical,
+                                              child: Row(
+                                                children: [
+                                                  Icon(Icons.email_rounded),
+                                                  Text(
+                                                    '   กรุณาป้อนอีเมล',
+                                                    style: GoogleFonts.kanit(
+                                                        color: Color.fromARGB(
+                                                            255, 0, 0, 0)),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
                                           ),
                                         )),
 
@@ -201,9 +243,12 @@ class _LOGIN_UIState extends State<LOGIN_UI> {
                                                 ),
                                         ),
                                         hintText:
-                                            'ป้อนรหัสผ่านต้องมากกว่า 6 ตัวอักษร',
-                                        hintStyle: TextStyle(
-                                          fontWeight: FontWeight.bold,
+                                            'ป้อนรหัสผ่านตั้งแต่ 6 ตัวอักษร',
+                                        hintStyle: GoogleFonts.kanit(
+                                          fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.03,
                                         ),
                                         enabledBorder: OutlineInputBorder(
                                           borderRadius:
@@ -218,11 +263,8 @@ class _LOGIN_UIState extends State<LOGIN_UI> {
                                         labelStyle: TextStyle(
                                             color: Color.fromARGB(
                                                 255, 220, 220, 220)),
-                                        label: SizedBox(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.45,
+                                        label: SingleChildScrollView(
+                                          scrollDirection: Axis.vertical,
                                           child: Row(
                                             children: [
                                               Icon(Icons.lock),
@@ -255,13 +297,10 @@ class _LOGIN_UIState extends State<LOGIN_UI> {
                                     children: [
                                       Checkbox(
                                         fillColor: MaterialStateProperty.all(
-                                            Colors.blue),
+                                            Color.fromARGB(0, 255, 255, 255)),
                                         focusColor: Colors.yellow,
-                                        shape: CircleBorder(
-                                            side: BorderSide(
-                                                width: 1.0, color: Colors.red)),
+                                        shape: CircleBorder(),
                                         checkColor: Colors.black,
-                                        activeColor: Colors.deepOrange,
                                         hoverColor: Colors.white,
                                         value: _isChecked,
                                         onChanged: _handleRemeberme,
@@ -289,11 +328,11 @@ class _LOGIN_UIState extends State<LOGIN_UI> {
                                   if (pass) {
                                     USER userInput = USER(
                                       userEmail: input_email.text,
-                                      userPassword: hash_md5(
-                                        "${input_password.text}",
-                                      ),
+                                      userPassword:
+                                          HASH.hash_md5(input_password.text),
                                     );
-
+                                    print(
+                                        'eeeeeeeeeeeeeee${userInput.userPassword}');
                                     AUTHENTICATION.callApiLogin(
                                         context, userInput);
                                   }
@@ -313,10 +352,10 @@ class _LOGIN_UIState extends State<LOGIN_UI> {
                                         0.01,
                                     bottom: MediaQuery.of(context).size.height *
                                         0.01,
-                                    left:
-                                        MediaQuery.of(context).size.width * 0.2,
-                                    right:
-                                        MediaQuery.of(context).size.width * 0.2,
+                                    left: MediaQuery.of(context).size.width *
+                                        0.15,
+                                    right: MediaQuery.of(context).size.width *
+                                        0.15,
                                   ),
                                   child: Text('เข้าสู่ระบบ',
                                       style: GoogleFonts.kanit(

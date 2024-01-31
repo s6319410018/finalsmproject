@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:smartwater/authentication/login.dart';
 import 'package:smartwater/models/user_model.dart';
 import 'package:smartwater/services/call_api_authentication.dart';
+import 'package:smartwater/utils/hash.dart';
 import 'package:smartwater/views/home.dart';
 import 'package:http/http.dart' as http;
 
@@ -99,8 +100,9 @@ class _REGISTER_UIState extends State<REGISTER_UI> {
 
                             decoration: InputDecoration(
                                 hintText: 'ชื่อ-นามสกุล',
-                                hintStyle: TextStyle(
-                                  fontWeight: FontWeight.bold,
+                                hintStyle: GoogleFonts.kanit(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.03,
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(30),
@@ -113,15 +115,18 @@ class _REGISTER_UIState extends State<REGISTER_UI> {
                                         BorderSide(color: Colors.white70)),
                                 labelStyle: TextStyle(
                                     color: Color.fromARGB(255, 220, 220, 220)),
-                                label: SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.35,
+                                label: SingleChildScrollView(
+                                  scrollDirection: Axis.vertical,
                                   child: Row(
                                     children: [
                                       Icon(Icons.people_rounded),
                                       Text(
                                         '   กรุณาป้อนชื่อ',
                                         style: GoogleFonts.kanit(
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.035,
                                             color: Colors.black),
                                       )
                                     ],
@@ -151,8 +156,9 @@ class _REGISTER_UIState extends State<REGISTER_UI> {
                             obscureText: false,
                             decoration: InputDecoration(
                                 hintText: 'ที่อยู่ปัจจุบัน',
-                                hintStyle: TextStyle(
-                                  fontWeight: FontWeight.bold,
+                                hintStyle: GoogleFonts.kanit(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.03,
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(30),
@@ -165,15 +171,18 @@ class _REGISTER_UIState extends State<REGISTER_UI> {
                                         BorderSide(color: Colors.white70)),
                                 labelStyle: TextStyle(
                                     color: Color.fromARGB(255, 220, 220, 220)),
-                                label: SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.38,
+                                label: SingleChildScrollView(
+                                  scrollDirection: Axis.vertical,
                                   child: Row(
                                     children: [
                                       Icon(Icons.home_work_rounded),
                                       Text(
                                         '   กรุณาป้อนที่อยู่',
                                         style: GoogleFonts.kanit(
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.035,
                                             color: Colors.black),
                                       )
                                     ],
@@ -204,8 +213,9 @@ class _REGISTER_UIState extends State<REGISTER_UI> {
                             obscureText: false,
                             decoration: InputDecoration(
                                 hintText: 'เบอร์โทรศัพย์ 10 ตัว',
-                                hintStyle: TextStyle(
-                                  fontWeight: FontWeight.bold,
+                                hintStyle: GoogleFonts.kanit(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.03,
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(30),
@@ -218,15 +228,18 @@ class _REGISTER_UIState extends State<REGISTER_UI> {
                                         BorderSide(color: Colors.white70)),
                                 labelStyle: TextStyle(
                                     color: Color.fromARGB(255, 220, 220, 220)),
-                                label: SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.45,
+                                label: SingleChildScrollView(
+                                  scrollDirection: Axis.vertical,
                                   child: Row(
                                     children: [
                                       Icon(Icons.phone_android_rounded),
                                       Text(
                                         '   กรุณาป้อนเบอร์โทร',
                                         style: GoogleFonts.kanit(
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.035,
                                             color: Colors.black),
                                       ),
                                     ],
@@ -256,13 +269,13 @@ class _REGISTER_UIState extends State<REGISTER_UI> {
                           child: TextFormField(
                             keyboardType: TextInputType.emailAddress,
                             cursorColor: Color.fromARGB(255, 0, 0, 0),
-                            style: TextStyle(
-                                color: Color.fromARGB(255, 0, 0, 0)), //<--
+                            style: TextStyle(), //<--
                             obscureText: false,
                             decoration: InputDecoration(
                                 hintText: 'กรุณาป้อนอีเมล เช่น 123@gmail.com',
-                                hintStyle: TextStyle(
-                                  fontWeight: FontWeight.bold,
+                                hintStyle: GoogleFonts.kanit(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.03,
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(30),
@@ -275,15 +288,18 @@ class _REGISTER_UIState extends State<REGISTER_UI> {
                                         BorderSide(color: Colors.white70)),
                                 labelStyle: TextStyle(
                                     color: Color.fromARGB(255, 220, 220, 220)),
-                                label: SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.39,
+                                label: SingleChildScrollView(
+                                  scrollDirection: Axis.vertical,
                                   child: Row(
                                     children: [
                                       Icon(Icons.email_rounded),
                                       Text(
                                         '   กรุณาป้อนอีเมล',
                                         style: GoogleFonts.kanit(
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.035,
                                             color: Colors.black),
                                       )
                                     ],
@@ -348,8 +364,9 @@ class _REGISTER_UIState extends State<REGISTER_UI> {
                                         ),
                                 ),
                                 hintText: 'ป้อนรหัสผ่านต้องมากกว่า 6 ตัวอักษร',
-                                hintStyle: TextStyle(
-                                  fontWeight: FontWeight.bold,
+                                hintStyle: GoogleFonts.kanit(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.03,
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(30),
@@ -362,15 +379,18 @@ class _REGISTER_UIState extends State<REGISTER_UI> {
                                         BorderSide(color: Colors.white70)),
                                 labelStyle: TextStyle(
                                     color: Color.fromARGB(255, 220, 220, 220)),
-                                label: SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.45,
+                                label: SingleChildScrollView(
+                                  scrollDirection: Axis.vertical,
                                   child: Row(
                                     children: [
                                       Icon(Icons.lock),
                                       Text(
                                         '   กรุณาป้อนรหัสผ่าน',
                                         style: GoogleFonts.kanit(
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.035,
                                             color: Colors.black),
                                       )
                                     ],
@@ -424,8 +444,9 @@ class _REGISTER_UIState extends State<REGISTER_UI> {
                                         ),
                                 ),
                                 hintText: 'รหัสผ่านต้องตรงกัน',
-                                hintStyle: TextStyle(
-                                  fontWeight: FontWeight.bold,
+                                hintStyle: GoogleFonts.kanit(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.03,
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(30),
@@ -438,15 +459,18 @@ class _REGISTER_UIState extends State<REGISTER_UI> {
                                         BorderSide(color: Colors.white70)),
                                 labelStyle: TextStyle(
                                     color: Color.fromARGB(255, 220, 220, 220)),
-                                label: SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.59,
+                                label: SingleChildScrollView(
+                                  scrollDirection: Axis.vertical,
                                   child: Row(
                                     children: [
                                       Icon(Icons.lock),
                                       Text(
                                         '   กรุณายืนยันรหัสผ่านอีกครั้ง',
                                         style: GoogleFonts.kanit(
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.035,
                                             color: Colors.black),
                                       )
                                     ],
@@ -479,8 +503,9 @@ class _REGISTER_UIState extends State<REGISTER_UI> {
                             obscureText: false,
                             decoration: InputDecoration(
                                 hintText: 'คีย์อยู่ในอุปกรณ์',
-                                hintStyle: TextStyle(
-                                  fontWeight: FontWeight.bold,
+                                hintStyle: GoogleFonts.kanit(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.03,
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(30),
@@ -493,15 +518,18 @@ class _REGISTER_UIState extends State<REGISTER_UI> {
                                         BorderSide(color: Colors.white70)),
                                 labelStyle: TextStyle(
                                     color: Color.fromARGB(255, 220, 220, 220)),
-                                label: SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.45,
+                                label: SingleChildScrollView(
+                                  scrollDirection: Axis.vertical,
                                   child: Row(
                                     children: [
                                       Icon(Icons.password_rounded),
                                       Text(
                                         '   กรุณาป้อนคีย์',
                                         style: GoogleFonts.kanit(
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.035,
                                             color: Colors.black),
                                       )
                                     ],
@@ -512,9 +540,9 @@ class _REGISTER_UIState extends State<REGISTER_UI> {
                               if (value!.isEmpty) {
                                 return 'ป้อนคีย์ก่อนทำรายการอีกครั้ง';
                               } else if (value.length < 10) {
-                                return 'เบอร์ไม่ถึง 10 ตัว';
+                                return 'คีย์ไม่ถึง 10 ตัว';
                               } else if (value.length > 10) {
-                                return 'เบอร์เกิน 10 ตัว';
+                                return 'คีร์ไม่เกิน 10 ตัว';
                               }
                               return null;
                             },
@@ -529,7 +557,8 @@ class _REGISTER_UIState extends State<REGISTER_UI> {
                                 userName: input_name.text,
                                 userAddress: input_address.text,
                                 userPhone: input_phone.text,
-                                userPassword: input_password.text,
+                                userPassword:
+                                    HASH.hash_md5(input_password.text),
                                 userProductId: input_key.text,
                                 userEmail: input_email.text);
                             AUTHENTICATION.callApiRegister(context, userInput);
@@ -548,18 +577,22 @@ class _REGISTER_UIState extends State<REGISTER_UI> {
                           padding: EdgeInsets.only(
                             bottom: MediaQuery.of(context).size.height * 0.01,
                             top: MediaQuery.of(context).size.height * 0.01,
-                            right: MediaQuery.of(context).size.width * 0.03,
-                            left: MediaQuery.of(context).size.width * 0.03,
+                            right: MediaQuery.of(context).size.width * 0.01,
+                            left: MediaQuery.of(context).size.width * 0.01,
                           ),
                           child: Text(
                             'ลงทะเบียนการใช้งาน',
-                            style:
-                                GoogleFonts.kanit(fontWeight: FontWeight.bold),
+                            style: GoogleFonts.kanit(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.07,
+                            ),
                           ),
                         ),
                       ),
                       SizedBox(
-                        height: MediaQuery.of(context).size.width * 0.02,
+                        height: MediaQuery.of(context).size.width * 0.05,
                       )
                     ],
                   )

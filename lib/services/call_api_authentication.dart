@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:smartwater/models/user_model.dart';
+import 'package:smartwater/utils/hash.dart';
 import 'package:smartwater/views/home.dart';
 import '../utils/env.dart';
 
@@ -21,14 +22,8 @@ class AUTHENTICATION {
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
         if (responseData == "1") {
-          String hash_md5(String input) {
-            var bytes = utf8.encode(input);
-            var digest = md5.convert(bytes);
-            return digest.toString();
-          }
-
           String? emailHome = userInput.userEmail;
-          String? passwordHome = hash_md5(userInput.userPassword.toString());
+          String? passwordHome = userInput.userPassword;
           showWarningDialogSuccess(context, emailHome, passwordHome);
         } else {
           showWarningDialog(context, 'Error: $responseData');
@@ -174,59 +169,63 @@ class AUTHENTICATION {
               size: MediaQuery.of(context).size.width * 0.1),
           actions: [
             Center(
-              child: Row(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(
-                      left: MediaQuery.of(context).size.width * 0.15,
-                    ),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => HOME_UI(
-                              email: emailHome,
-                              password: passwordHome,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(
+                        left: MediaQuery.of(context).size.width * 0.1,
+                      ),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => HOME_UI(
+                                email: emailHome,
+                                password: passwordHome,
+                              ),
                             ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
                           ),
-                        );
+                        ),
+                        child: Text(
+                          'ตกลง',
+                          style: GoogleFonts.kanit(
+                              color: Colors.black,
+                              fontSize:
+                                  MediaQuery.of(context).size.width * 0.05),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.05,
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
+                        backgroundColor: Color.fromARGB(255, 254, 105, 105),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
                       ),
                       child: Text(
-                        'ตกลง',
+                        'ยกเลิก',
                         style: GoogleFonts.kanit(
                             color: Colors.black,
                             fontSize: MediaQuery.of(context).size.width * 0.05),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.05,
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromARGB(255, 254, 105, 105),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                    ),
-                    child: Text(
-                      'ยกเลิก',
-                      style: GoogleFonts.kanit(
-                          color: Colors.black,
-                          fontSize: MediaQuery.of(context).size.width * 0.05),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             )
           ],
