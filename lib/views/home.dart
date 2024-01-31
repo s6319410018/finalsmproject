@@ -2230,7 +2230,7 @@ class _HOME_UIState extends State<HOME_UI> {
                                                                                           DateFormat dateFormat = DateFormat('yyyy-MM-dd');
                                                                                           DateFormat timeFormat = DateFormat('HH:mm:ss');
 
-                                                                                          TIMECONTROL timeInput = TIMECONTROL(userEmail: widget.email, userPassword: widget.password, controlDateOn: dateFormat.format(dateTimeList?[0] ?? DateTime.now()), controlDateOFF: dateFormat.format(dateTimeList?[1] ?? DateTime.now()), controlTimeOn: timeFormat.format(dateTimeList?[0] ?? DateTime.now()), controlTimeOFF: timeFormat.format(dateTimeList?[1] ?? DateTime.now()));
+                                                                                          TIMECONTROL timeInput = TIMECONTROL(userEmail: widget.email, userPassword: widget.password, controlAi: '3', controlSolenoid: '3', controlDateOn: dateFormat.format(dateTimeList?[0] ?? DateTime.now()), controlDateOFF: dateFormat.format(dateTimeList?[1] ?? DateTime.now()), controlTimeOn: timeFormat.format(dateTimeList?[0] ?? DateTime.now()), controlTimeOFF: timeFormat.format(dateTimeList?[1] ?? DateTime.now()));
                                                                                           print(timeInput);
                                                                                           if (dateTimeList?[1].day != null && dateTimeList?[1].month != null && dateTimeList?[1].year != null && dateTimeList?[1].hour != null && dateTimeList?[1].minute != null) {
                                                                                             CALLAPIDATAHOME.callApiUpdatetime(context, timeInput);
@@ -2264,7 +2264,7 @@ class _HOME_UIState extends State<HOME_UI> {
                                                                                     ElevatedButton.icon(
                                                                                       onPressed: () {
                                                                                         if (true) {
-                                                                                          TIMECONTROL timeInput = TIMECONTROL(userEmail: widget.email, userPassword: widget.password, controlDateOn: "00-00-00", controlDateOFF: "00-00-00", controlTimeOn: "00:00:00", controlTimeOFF: "00:00:00");
+                                                                                          TIMECONTROL timeInput = TIMECONTROL(userEmail: widget.email, userPassword: widget.password, controlAi: '0', controlSolenoid: '0', controlDateOn: "00-00-00", controlDateOFF: "00-00-00", controlTimeOn: "00:00:00", controlTimeOFF: "00:00:00");
 
                                                                                           CALLAPIDATAHOME.callApiUpdatetime(
                                                                                             context,
