@@ -62,7 +62,7 @@ class _HOME_UIState extends State<HOME_UI> {
   bool ai_icon = false;
   bool time_icon = false;
   bool isLoading = true;
-  bool isButtonLocked = true;
+  //bool isButtonLocked = true;
   /////////////////////////////////////////////
   late List<REALTIME> _realtimeDataList;
   late DatadetailsDataSourcePage1
@@ -281,7 +281,7 @@ class _HOME_UIState extends State<HOME_UI> {
         }
       },
     );
-    checkFirstTime();
+    //checkFirstTime();
 
     //เรียกใช้งานฟังก์ชั่นสำหรับการเรียกใช้งาน API
     _fetchDataPeriodically();
@@ -429,7 +429,7 @@ class _HOME_UIState extends State<HOME_UI> {
     );
   }
 
-  //ฟังก์ชั่นล็อกปุ่ม
+  /*ฟังก์ชั่นล็อกปุ่ม
   Future<void> checkFirstTime() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -455,7 +455,7 @@ class _HOME_UIState extends State<HOME_UI> {
       }
     }
   }
-
+   */
   //datatestตัวแปรเก็บค่า ON-OFF
   List<DateTime>? dateTimeList;
   //  //ฟังก์ชันสำหรับสร้าง notification
@@ -660,25 +660,24 @@ class _HOME_UIState extends State<HOME_UI> {
                                                               0.02,
                                                     ),
                                                     child: ElevatedButton.icon(
-                                                      onPressed: isButtonLocked
-                                                          ? null
-                                                          : () {
-                                                              if (true) {
-                                                                AICONTROL aiInput = AICONTROL(
-                                                                    controlAi:
-                                                                        "1",
-                                                                    userEmail:
-                                                                        widget
-                                                                            .email,
-                                                                    userPassword:
-                                                                        widget
-                                                                            .password);
-                                                                CALLAPIDATAHOME
-                                                                    .callApiUpdateAi(
-                                                                        context,
-                                                                        aiInput);
-                                                              }
-                                                            },
+                                                      onPressed: () {
+                                                        if (true) {
+                                                          AICONTROL aiInput =
+                                                              AICONTROL(
+                                                                  controlAi:
+                                                                      "1",
+                                                                  userEmail:
+                                                                      widget
+                                                                          .email,
+                                                                  userPassword:
+                                                                      widget
+                                                                          .password);
+                                                          CALLAPIDATAHOME
+                                                              .callApiUpdateAi(
+                                                                  context,
+                                                                  aiInput);
+                                                        }
+                                                      },
                                                       icon: Icon(
                                                           FontAwesomeIcons
                                                               .robot,
@@ -755,25 +754,20 @@ class _HOME_UIState extends State<HOME_UI> {
                                                             0.002,
                                                   ),
                                                   ElevatedButton.icon(
-                                                    onPressed: isButtonLocked
-                                                        ? null
-                                                        : () {
-                                                            AICONTROL aiInput =
-                                                                AICONTROL(
-                                                                    userEmail:
-                                                                        widget
-                                                                            .email,
-                                                                    userPassword:
-                                                                        widget
-                                                                            .password,
-                                                                    controlAi:
-                                                                        "0");
+                                                    onPressed: () {
+                                                      AICONTROL aiInput =
+                                                          AICONTROL(
+                                                              userEmail:
+                                                                  widget.email,
+                                                              userPassword:
+                                                                  widget
+                                                                      .password,
+                                                              controlAi: "0");
 
-                                                            CALLAPIDATAHOME
-                                                                .callApiUpdateAi(
-                                                                    context,
-                                                                    aiInput);
-                                                          },
+                                                      CALLAPIDATAHOME
+                                                          .callApiUpdateAi(
+                                                              context, aiInput);
+                                                    },
                                                     icon: Icon(
                                                         FontAwesomeIcons
                                                             .usersGear,
